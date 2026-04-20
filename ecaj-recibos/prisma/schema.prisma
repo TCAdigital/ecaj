@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(cuid())
+  email     String     @unique
+  password  String
+  nome      String
+  role      String     @default("user")
+  ativo     Boolean    @default(true)
+  criadoEm  DateTime   @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  clientes Clientes[]
+  recibos  Recibos[]
+}
+
+model Clientes {
+  id           String     @id @default(cuid())
+  nome         String
+  cpfCnpj      String?
+  email        String
+  telefone     String?
+  endereco     String?
+  cidade       String?
+  estado       String?
+  cep          String?
+  criadoEm     DateTime   @default(now())
+  atualizadoEm DateTime   @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  recibos Recibos[]
+
+  @@index([userId])
+}
+
+model Recibos {
+  id              String     @id @default(cuid())
+  numero          Int        @unique @default(autoincrement())
+  data            DateTime   @default(now())
+  dataRecebimento String?
+  cliente         String
+  clienteId       String
+  servicos        Json       // Array de {descricao, valor}
+  outros          Json?      // Array de {descricao, valor}
+  valorTotal      Float
+  pdfUrl          String?
+  pdfBlobUrl      String?
+  assinatura      String?    // Base64 ou URL da assinatura
+  historico       Historico[]
+  criadoEm        DateTime   @default(now())
+  atualizadoEm    DateTime   @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  clienteRelacao Clientes @relation(fields: [clienteId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([clienteId])
+  @@index([numero])
+}
+
+model Historico {
+  id         String   @id @default(cuid())
+  reciboId   String
+  recibo     Recibos  @relation(fields: [reciboId], references: [id], onDelete: Cascade)
+  acao       String   // "criado", "enviado_email", "enviado_whatsapp", "duplicado"
+  descricao  String?
+  emailEnviadoPara String?
+  whatsappEnviadoPara String?
+  criadoEm   DateTime @default(now())
+
+  @@index([reciboId])
+}
