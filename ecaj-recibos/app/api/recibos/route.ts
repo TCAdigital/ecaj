@@ -1,13 +1,11 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '../auth/[...nextauth]/route'
-import { PrismaClient } from '@prisma/client'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
+import prisma from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
-
-const prisma = new PrismaClient()
 
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as any
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
@@ -28,7 +26,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as any
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
@@ -55,8 +53,8 @@ export async function POST(req: NextRequest) {
         cliente: cliente.nome,
         clienteId,
         dataRecebimento,
-        servicos: JSON.stringify(servicos),
-        outros: JSON.stringify(outros || []),
+        servicos: servicos,
+        outros: outros || [],
         valorTotal,
         assinatura,
         userId: session.user.id,

@@ -128,11 +128,20 @@ export default function SignaturePad({ onSave, onCancel }: SignaturePadProps) {
 
   return (
     <div className="space-y-4">
-      <p className="text-sm text-secondary-600">
-        Desenhe sua assinatura abaixo (use mouse ou dedo no celular)
-      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold text-secondary-600">
+          Digital Signature
+        </p>
+        <button
+          type="button"
+          onClick={handleClear}
+          className="text-xs font-bold text-primary-600 hover:text-primary-700 uppercase tracking-wider"
+        >
+          Limpar Quadro
+        </button>
+      </div>
 
-      <div className="border-2 border-primary-300 rounded-lg overflow-hidden bg-white">
+      <div className="border-2 border-secondary-200 rounded-2xl overflow-hidden bg-white shadow-inner">
         <canvas
           ref={canvasRef}
           className="w-full h-48 md:h-64 cursor-crosshair touch-none"
@@ -142,24 +151,20 @@ export default function SignaturePad({ onSave, onCancel }: SignaturePadProps) {
       <div className="flex gap-3">
         <button
           type="button"
-          onClick={handleClear}
-          className="flex-1 px-4 py-2 border border-secondary-300 text-secondary-700 hover:bg-secondary-50 rounded-lg font-medium transition"
-        >
-          Limpar
-        </button>
-        <button
-          type="button"
           onClick={onCancel}
-          className="flex-1 px-4 py-2 border border-secondary-300 text-secondary-700 hover:bg-secondary-50 rounded-lg font-medium transition"
+          className="flex-1 px-4 py-3 border border-secondary-200 text-secondary-700 hover:bg-secondary-50 rounded-xl font-semibold transition-all"
         >
           Cancelar
         </button>
         <button
           type="button"
           onClick={handleSave}
-          className="flex-1 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition"
+          className="flex-2 px-8 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold transition-all shadow-md shadow-primary-600/20 flex items-center justify-center gap-2"
         >
-          ✓ Salvar
+          <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+          </svg>
+          Confirmar Assinatura
         </button>
       </div>
     </div>

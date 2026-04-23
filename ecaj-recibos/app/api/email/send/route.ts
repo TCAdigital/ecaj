@@ -1,15 +1,12 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
-import { Resend } from 'resend'
-import { PrismaClient } from '@prisma/client'
+import { authOptions } from '@/lib/auth'
+import nodemailer from 'nodemailer'
+import prisma from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
-
-const resend = new Resend(process.env.RESEND_API_KEY)
-const prisma = new PrismaClient()
+import { getServerSession } from 'next-auth/next'
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getServerSession(authOptions) as any
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
@@ -29,44 +26,76 @@ export async function POST(req: NextRequest) {
 
     // Converter PDF para buffer
     const pdfBuffer = await pdf.arrayBuffer()
-    const base64Pdf = Buffer.from(pdfBuffer).toString('base64')
+    const buffer = Buffer.from(pdfBuffer)
 
-    // Enviar email com Resend
-    const response = await resend.emails.send({
-      from: 'noreply@ecaj.com.br',
+    // Configurar transportador SMTP
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST,
+      port: parseInt(process.env.SMTP_PORT || '465'),
+      secure: process.env.SMTP_PORT === '465',
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    })
+
+    // Enviar email com Nodemailer
+    const info = await transporter.sendMail({
+      from: process.env.SMTP_FROM,
       to: email,
       subject: `Recibo #${numero} - ECAJ`,
       html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #003366;">Olá ${nome}! 👋</h2>
-          
-          <p>Seu recibo foi gerado com sucesso!</p>
-          
-          <div style="background: #f0f7ff; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 5px 0;"><strong>Número do Recibo:</strong> #${numero}</p>
-            <p style="margin: 5px 0;"><strong>Valor:</strong> R$ ${parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
+        <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; padding: 40px 20px;">
+          <div style="background-color: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+            <div style="background-color: #0f766e; padding: 30px; text-align: center;">
+              <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 1px;">ECAJ</h1>
+              <p style="color: #99f6e4; margin: 5px 0 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">Assessoria Contábil</p>
+            </div>
+            
+            <div style="padding: 40px 30px;">
+              <h2 style="color: #1e293b; margin: 0 0 20px 0; font-size: 20px;">Olá, ${nome}!</h2>
+              <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
+                Seu recibo foi gerado com sucesso pelo nosso sistema. Abaixo você encontra os detalhes do documento que também segue em anexo como PDF.
+              </p>
+              
+              <div style="background-color: #f1f5f9; border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                  <tr>
+                    <td style="padding-bottom: 10px; color: #64748b; font-size: 13px; text-transform: uppercase; font-weight: bold;">Número do Recibo</td>
+                    <td style="padding-bottom: 10px; text-align: right; color: #1e293b; font-weight: bold;">#${numero}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding-top: 10px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 13px; text-transform: uppercase; font-weight: bold;">Valor Recebido</td>
+                    <td style="padding-top: 10px; border-top: 1px solid #e2e8f0; text-align: right; color: #0176ed; font-size: 18px; font-weight: 800;">R$ ${parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                  </tr>
+                </table>
+              </div>
+              
+              <p style="color: #64748b; font-size: 14px; line-height: 1.6; margin: 0; text-align: center;">
+                Este é um e-mail automático. Por favor, não responda. <br>
+                Em caso de dúvidas, entre em contato conosco pelos canais oficiais.
+              </p>
+            </div>
+            
+            <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 30px; text-align: center;">
+              <p style="margin: 0; color: #94a3b8; font-size: 12px;">
+                <strong>ECAJ - Assessoria Fiscal e Contábil</strong><br>
+                Rua Olavo Bilac, 4-26, Vila São João da Boa Vista, Bauru/SP<br>
+                (14) 3208-3272 • contato@ecajcontabil.com.br
+              </p>
+            </div>
           </div>
-          
-          <p>O PDF está em anexo. Você pode salvar ou imprimir para seus registros.</p>
-          
-          <hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
-          
-          <p style="font-size: 12px; color: #666;">
-            ECAJ - Assessoria Fiscal e Contábil<br>
-            Telefone: (14) 3208-3272<br>
-            Email: contato@ecajcontabil.com.br
-          </p>
         </div>
       `,
       attachments: [
         {
           filename: `recibo-${numero}.pdf`,
-          content: base64Pdf,
+          content: buffer,
         },
       ],
     })
 
-    if (!response.id) {
+    if (!info.messageId) {
       return NextResponse.json({ error: 'Erro ao enviar email' }, { status: 500 })
     }
 
@@ -82,7 +111,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      messageId: response.id,
+      messageId: info.messageId,
     })
   } catch (error) {
     console.error('Erro ao enviar email:', error)

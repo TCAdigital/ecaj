@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import NavBar from '@/components/NavBar'
 import ReciboList from '@/components/ReciboList'
 import ClienteForm from '@/components/ClienteForm'
+import ReciboForm from '@/components/ReciboForm'
 
 type Tab = 'recibos' | 'clientes' | 'novo-recibo'
 
@@ -36,41 +37,81 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-secondary-50/50">
       <NavBar />
 
-      <main className="max-w-6xl mx-auto p-4 md:p-6">
-        {/* Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-secondary-200">
+      <main className="max-w-6xl mx-auto p-4 md:p-6 space-y-8">
+        {/* Header / Boas Vindas */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-secondary-900">Olá, {session?.user?.name || 'Administrador'}</h1>
+            <p className="text-secondary-500">Gerencie seus clientes e emissões de recibos.</p>
+          </div>
+          <div className="flex gap-3">
+            <div className="bg-white px-4 py-2 rounded-xl border border-secondary-200 shadow-sm flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-primary-50 flex items-center justify-center text-primary-600">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs text-secondary-500 uppercase font-bold tracking-wider">Total do Mês</p>
+                <p className="text-lg font-bold text-secondary-900">R$ 0,00</p>
+              </div>
+            </div>
+            <div className="bg-white px-4 py-2 rounded-xl border border-secondary-200 shadow-sm flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-green-50 flex items-center justify-center text-green-600">
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs text-secondary-500 uppercase font-bold tracking-wider">Recibos</p>
+                <p className="text-lg font-bold text-secondary-900">0</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Tabs / Navegação */}
+        <div className="flex bg-secondary-100 p-1.5 rounded-xl w-fit mb-8 shadow-inner">
           <button
             onClick={() => setActiveTab('recibos')}
-            className={`px-4 py-3 font-medium border-b-2 transition ${
+            className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${
               activeTab === 'recibos'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-secondary-600 hover:text-secondary-900'
+                ? 'bg-white text-secondary-900 shadow-sm'
+                : 'text-secondary-600 hover:text-secondary-900 hover:bg-secondary-200/50'
             }`}
           >
-            📋 Recibos
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Recibos
           </button>
           <button
             onClick={() => setActiveTab('novo-recibo')}
-            className={`px-4 py-3 font-medium border-b-2 transition ${
+            className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${
               activeTab === 'novo-recibo'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-secondary-600 hover:text-secondary-900'
+                ? 'bg-white text-secondary-900 shadow-sm'
+                : 'text-secondary-600 hover:text-secondary-900 hover:bg-secondary-200/50'
             }`}
           >
-            ➕ Novo Recibo
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+            </svg>
+            Novo Recibo
           </button>
           <button
             onClick={() => setActiveTab('clientes')}
-            className={`px-4 py-3 font-medium border-b-2 transition ${
+            className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-200 flex items-center gap-2 ${
               activeTab === 'clientes'
-                ? 'border-primary-600 text-primary-600'
-                : 'border-transparent text-secondary-600 hover:text-secondary-900'
+                ? 'bg-white text-secondary-900 shadow-sm'
+                : 'text-secondary-600 hover:text-secondary-900 hover:bg-secondary-200/50'
             }`}
           >
-            👥 Clientes
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5V10a2 2 0 00-2-2h-3l-2.5-3.5a1 1 0 00-1.6 0L8 8H5a2 2 0 00-2 2v10h5M8 20v-5h8v5M12 11h.01" />
+            </svg>
+            Clientes
           </button>
         </div>
 

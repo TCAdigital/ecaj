@@ -1,11 +1,19 @@
-import type { Metadata } from 'next'
-import { SessionProvider } from 'next-auth/react'
+import type { Metadata, Viewport } from 'next'
+import { Inter } from 'next/font/google'
+import { Providers } from '@/components/Providers'
 import './globals.css'
+
+const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'ECAJ - Sistema de Recibos',
   description: 'Sistema de gerenciamento de recibos',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 }
 
 export default function RootLayout({
@@ -15,10 +23,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" suppressHydrationWarning>
-      <body className="bg-white text-secondary-900 font-sans antialiased">
-        <SessionProvider>
+      <body className={`${inter.className} bg-white text-secondary-900 antialiased`}>
+        <Providers>
           {children}
-        </SessionProvider>
+        </Providers>
       </body>
     </html>
   )
