@@ -202,9 +202,9 @@ export default function ReciboList() {
         const errorData = await res.json()
         alert(`Erro ao enviar e-mail: ${errorData.details || errorData.error || 'Erro desconhecido'}`)
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao enviar e-mail:', error)
-      alert('Erro ao enviar e-mail')
+      alert(`Erro ao enviar e-mail (Front): ${error.message || String(error)}`)
     } finally {
       setGeneratingPdf(null)
     }

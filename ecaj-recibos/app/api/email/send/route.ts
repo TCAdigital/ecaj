@@ -100,7 +100,10 @@ export async function POST(req: NextRequest) {
     })
 
     if (!info.messageId) {
-      return NextResponse.json({ error: 'Erro ao enviar email' }, { status: 500 })
+      return NextResponse.json({ 
+        error: 'Erro ao enviar email', 
+        details: 'O servidor SMTP não retornou um ID de mensagem. Verifique as configurações.' 
+      }, { status: 500 })
     }
 
     // Registrar envio no histórico
