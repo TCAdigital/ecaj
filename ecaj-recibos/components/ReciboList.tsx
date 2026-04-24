@@ -199,12 +199,20 @@ export default function ReciboList() {
         alert('E-mail enviado com sucesso!')
         await fetchRecibos()
       } else {
-        const errorData = await res.json()
-        alert(`Erro ao enviar e-mail: ${errorData.details || errorData.error || 'Erro desconhecido'}`)
+        const status = res.status
+        let errorMsg = 'Erro desconhecido'
+        try {
+          const errorData = await res.json()
+          errorMsg = errorData.details || errorData.error || res.statusText
+        } catch (e) {
+          errorMsg = res.statusText || 'Falha ao processar resposta do servidor'
+        }
+        console.error(`Erro API Email (${status}):`, errorMsg)
+        alert(`Erro ${status}: ${errorMsg}`)
       }
     } catch (error: any) {
-      console.error('Erro ao enviar e-mail:', error)
-      alert(`Erro ao enviar e-mail (Front): ${error.message || String(error)}`)
+      console.error('Erro Fatal no Envio de E-mail:', error)
+      alert(`Erro Crítico: ${error.message || String(error)}`)
     } finally {
       setGeneratingPdf(null)
     }

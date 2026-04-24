@@ -37,6 +37,9 @@ export async function POST(req: NextRequest) {
         user: process.env.SMTP_USER || 'contato@ecajcontabil.com.br',
         pass: process.env.SMTP_PASS,
       },
+      connectionTimeout: 8000, // 8 segundos (para não estourar os 10s da Vercel)
+      greetingTimeout: 8000,
+      socketTimeout: 8000,
       tls: {
         rejectUnauthorized: false,
         minVersion: 'TLSv1.2'
