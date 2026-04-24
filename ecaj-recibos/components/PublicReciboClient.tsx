@@ -41,7 +41,7 @@ export default function PublicReciboClient({ recibo }: Props) {
       
       await new Promise(resolve => setTimeout(resolve, 1000))
       
-      const canvas = await html2canvas(container, { scale: 2, width: 800 })
+      const canvas = await html2canvas(container, { scale: 1.5, width: 800 })
       const imgData = canvas.toDataURL('image/png')
       const pdf = new jsPDF('p', 'mm', 'a4')
       const pdfWidth = pdf.internal.pageSize.getWidth()
