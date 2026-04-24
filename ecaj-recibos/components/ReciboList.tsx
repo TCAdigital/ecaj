@@ -83,7 +83,7 @@ export default function ReciboList() {
     await new Promise(resolve => setTimeout(resolve, 800))
     
     const canvas = await html2canvas(container, {
-      scale: 1.5, // Reduzido de 2 para 1.5 para evitar Erro 413 (Payload Too Large)
+      scale: 1.0, // Reduzido ao mínimo (1.0) para garantir que o arquivo fique abaixo de 1MB
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff',
