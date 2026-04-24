@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
     const valor = formData.get('valor') as string
     const pdf = formData.get('pdf') as File
 
-    if (!email || !nome || !numero) {
-      return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 })
+    if (!email || !nome || !numero || !pdf) {
+      return NextResponse.json({ error: 'Dados incompletos (e-mail, nome, número ou PDF ausente)' }, { status: 400 })
     }
 
     // Converter PDF para buffer
@@ -30,18 +30,21 @@ export async function POST(req: NextRequest) {
 
     // Configurar transportador SMTP
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
+      host: process.env.SMTP_HOST || 'mail.ecajcontabil.com.br',
       port: parseInt(process.env.SMTP_PORT || '465'),
-      secure: process.env.SMTP_PORT === '465',
+      secure: process.env.SMTP_PORT === '465' || !process.env.SMTP_PORT, // true para 465, false para outras
       auth: {
-        user: process.env.SMTP_USER,
+        user: process.env.SMTP_USER || 'contato@ecajcontabil.com.br',
         pass: process.env.SMTP_PASS,
       },
+      tls: {
+        rejectUnauthorized: false // Ajuda com servidores que têm certificados auto-assinados ou problemas de SSL
+      }
     })
 
     // Enviar email com Nodemailer
     const info = await transporter.sendMail({
-      from: process.env.SMTP_FROM,
+      from: process.env.SMTP_FROM || process.env.SMTP_USER || 'contato@ecajcontabil.com.br',
       to: email,
       subject: `Recibo #${numero} - ECAJ`,
       html: `
