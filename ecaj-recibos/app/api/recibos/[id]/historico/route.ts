@@ -1,0 +1,46 @@
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
+import prisma from '@/lib/prisma'
+import { NextRequest, NextResponse } from 'next/server'
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const session = await getServerSession(authOptions) as any
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
+    }
+
+    const { acao, descricao, emailEnviadoPara, whatsappEnviadoPara } = await req.json()
+
+    const recibo = await prisma.recibos.findUnique({
+      where: { id: params.id },
+    })
+
+    if (!recibo) {
+      return NextResponse.json({ error: 'Recibo não encontrado' }, { status: 404 })
+    }
+
+    if (recibo.userId !== session.user.id) {
+      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+    }
+
+    const historico = await prisma.historico.create({
+      data: {
+        reciboId: params.id,
+        acao,
+        descricao,
+        emailEnviadoPara,
+        whatsappEnviadoPara,
+      },
+    })
+
+    return NextResponse.json(historico)
+  } catch (error) {
+    console.error('Erro ao criar histórico:', error)
+    return NextResponse.json({ error: 'Erro ao criar histórico' }, { status: 500 })
+  }
+}
