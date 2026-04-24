@@ -117,8 +117,11 @@ export async function POST(req: NextRequest) {
       success: true,
       messageId: info.messageId,
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao enviar email:', error)
-    return NextResponse.json({ error: 'Erro ao enviar email' }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Erro ao enviar email', 
+      details: error.message || String(error)
+    }, { status: 500 })
   }
 }

@@ -197,12 +197,10 @@ export default function ReciboList() {
 
       if (res.ok) {
         alert('E-mail enviado com sucesso!')
-        
-        // Registrar envio no histórico (o backend de email já faz isso, mas garantimos aqui)
         await fetchRecibos()
       } else {
         const errorData = await res.json()
-        alert(`Erro ao enviar e-mail: ${errorData.error || 'Erro desconhecido'}`)
+        alert(`Erro ao enviar e-mail: ${errorData.details || errorData.error || 'Erro desconhecido'}`)
       }
     } catch (error) {
       console.error('Erro ao enviar e-mail:', error)
