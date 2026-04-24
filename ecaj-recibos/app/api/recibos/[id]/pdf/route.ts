@@ -39,7 +39,7 @@ export async function GET(
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b; background: white; }
-          .container { width: 210mm; height: 297mm; padding: 40px; position: relative; }
+          .container { width: 210mm; min-height: 297mm; padding: 40px; position: relative; display: flex; flex-direction: column; }
           
           /* Cabeçalho Profissional */
           .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #0f766e; padding-bottom: 20px; }
@@ -83,7 +83,7 @@ export async function GET(
           .sign-name { font-size: 11px; color: #475569; font-weight: bold; }
           
           /* Rodapé */
-          .footer { position: absolute; bottom: 40px; left: 40px; right: 40px; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 15px; font-size: 9px; color: #94a3b8; }
+          .footer { margin-top: auto; padding-top: 40px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 9px; color: #94a3b8; }
           
           .clearfix::after { content: ""; display: table; clear: both; }
         </style>
