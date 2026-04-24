@@ -31,14 +31,15 @@ export async function POST(req: NextRequest) {
     // Configurar transportador SMTP
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'mail.ecajcontabil.com.br',
-      port: parseInt(process.env.SMTP_PORT || '465'),
-      secure: process.env.SMTP_PORT === '465' || !process.env.SMTP_PORT, // true para 465, false para outras
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_PORT === '465', // true apenas para 465
       auth: {
         user: process.env.SMTP_USER || 'contato@ecajcontabil.com.br',
         pass: process.env.SMTP_PASS,
       },
       tls: {
-        rejectUnauthorized: false // Ajuda com servidores que têm certificados auto-assinados ou problemas de SSL
+        rejectUnauthorized: false,
+        minVersion: 'TLSv1.2'
       }
     })
 
