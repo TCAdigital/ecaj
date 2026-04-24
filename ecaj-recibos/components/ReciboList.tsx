@@ -143,7 +143,7 @@ export default function ReciboList() {
         return
       }
 
-      const mensagem = `Olá *${clienteData.nome}*! 👋\n\nSeu recibo *#${recibo.numero.toString().padStart(4, '0')}* foi gerado com sucesso pela *ECAJ*.\n\n💰 *Valor:* R$ ${recibo.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}\n\nO PDF foi enviado para o seu e-mail e também está disponível para download no nosso sistema.`
+      const mensagem = `Olá *${clienteData.nome}*!\n\nSeu recibo *#${recibo.numero.toString().padStart(4, '0')}* foi gerado com sucesso pela *ECAJ*.\n\n*Valor:* R$ ${recibo.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}\n\nVocê pode visualizar e baixar o seu recibo clicando no link abaixo:\n${window.location.origin}/public/recibo/${reciboId}\n\nO PDF também foi enviado para o seu e-mail.`
       
       const url = `https://wa.me/55${telefone}?text=${encodeURIComponent(mensagem)}`
       window.open(url, '_blank')
