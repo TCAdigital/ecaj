@@ -14,10 +14,25 @@ export default function DashboardPage() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<Tab>('recibos')
+  const [stats, setStats] = useState({ totalValor: 0, totalQuantidade: 0 })
+
+  const fetchStats = async () => {
+    try {
+      const res = await fetch('/api/stats')
+      if (res.ok) {
+        const data = await res.json()
+        setStats(data)
+      }
+    } catch (error) {
+      console.error('Erro ao buscar estatísticas:', error)
+    }
+  }
 
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/')
+    } else if (status === 'authenticated') {
+      fetchStats()
     }
   }, [status, router])
 
@@ -56,7 +71,9 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-xs text-secondary-500 uppercase font-bold tracking-wider">Total do Mês</p>
-                <p className="text-lg font-bold text-secondary-900">R$ 0,00</p>
+                <p className="text-lg font-bold text-secondary-900">
+                  R$ {stats.totalValor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                </p>
               </div>
             </div>
             <div className="bg-white px-4 py-2 rounded-xl border border-secondary-200 shadow-sm flex items-center gap-3">
@@ -67,7 +84,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-xs text-secondary-500 uppercase font-bold tracking-wider">Recibos</p>
-                <p className="text-lg font-bold text-secondary-900">0</p>
+                <p className="text-lg font-bold text-secondary-900">{stats.totalQuantidade}</p>
               </div>
             </div>
           </div>
@@ -118,7 +135,14 @@ export default function DashboardPage() {
         {/* Content */}
         <div className="animate-fade-in">
           {activeTab === 'recibos' && <ReciboList />}
-          {activeTab === 'novo-recibo' && <ReciboForm onSuccess={() => setActiveTab('recibos')} />}
+          {activeTab === 'novo-recibo' && (
+            <ReciboForm 
+              onSuccess={() => {
+                setActiveTab('recibos')
+                fetchStats() // Atualizar estatísticas após criar novo
+              }} 
+            />
+          )}
           {activeTab === 'clientes' && <ClienteForm />}
         </div>
       </main>
