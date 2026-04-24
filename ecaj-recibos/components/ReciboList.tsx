@@ -192,7 +192,7 @@ export default function ReciboList() {
       formData.append('valor', recibo.valorTotal.toString())
       formData.append('pdf', blob, `recibo-${numero}.pdf`)
 
-      const res = await fetch(`/api/email/send?t=${Date.now()}`, {
+      const res = await fetch('/api/email/send', {
         method: 'POST',
         body: formData,
       })
@@ -210,11 +210,11 @@ export default function ReciboList() {
           errorMsg = res.statusText || 'Falha ao processar resposta do servidor'
         }
         console.error(`Erro API Email (${status}):`, errorMsg)
-        alert(`!!! ERRO ${status}: ${errorMsg} !!!`)
+        alert(`Erro ao enviar e-mail (${status}): ${errorMsg}`)
       }
     } catch (error: any) {
-      console.error('Erro Fatal no Envio de E-mail:', error)
-      alert(`Erro Crítico: ${error.message || String(error)}`)
+      console.error('Erro no Envio de E-mail:', error)
+      alert(`Falha na comunicação: ${error.message || String(error)}`)
     } finally {
       setGeneratingPdf(null)
     }
