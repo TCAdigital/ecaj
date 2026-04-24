@@ -145,6 +145,10 @@ export default function DashboardPage() {
           )}
           {activeTab === 'clientes' && <ClienteForm />}
         </div>
+        
+        <div className="text-center pt-8">
+          <p className="text-[10px] text-secondary-300 uppercase tracking-widest font-bold">Sistema ECAJ • Versão 1.1 • Diagnóstico de E-mail Ativo</p>
+        </div>
       </main>
     </div>
   )
