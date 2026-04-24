@@ -42,12 +42,17 @@ export default function PublicReciboClient({ recibo }: Props) {
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       const canvas = await html2canvas(container, { scale: 1.5, width: 800 })
-      const imgData = canvas.toDataURL('image/png')
-      const pdf = new jsPDF('p', 'mm', 'a4')
+      const imgData = canvas.toDataURL('image/jpeg', 0.7)
+      const pdf = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4',
+        compress: true
+      })
       const pdfWidth = pdf.internal.pageSize.getWidth()
       const imgHeight = (canvas.height * pdfWidth) / canvas.width
       
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight)
+      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight)
       pdf.save(`recibo-${recibo.numero.toString().padStart(4, '0')}.pdf`)
       
       document.body.removeChild(container)

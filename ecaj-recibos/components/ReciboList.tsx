@@ -90,17 +90,19 @@ export default function ReciboList() {
       width: 800, // Forçar largura do canvas
     })
     
-    const imgData = canvas.toDataURL('image/png')
-    const pdf = new jsPDF('p', 'mm', 'a4')
+    const imgData = canvas.toDataURL('image/jpeg', 0.7) // Usar JPEG com 70% de qualidade para reduzir drasticamente o tamanho
+    const pdf = new jsPDF({
+      orientation: 'p',
+      unit: 'mm',
+      format: 'a4',
+      compress: true // Ativar compressão nativa do PDF
+    })
     
     const pdfWidth = pdf.internal.pageSize.getWidth()
-    const pdfHeight = pdf.internal.pageSize.getHeight()
-    
-    // Calcular proporção para preencher a largura do A4
     const imgWidth = pdfWidth
     const imgHeight = (canvas.height * imgWidth) / canvas.width
     
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight)
+    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight)
     document.body.removeChild(container)
     
     return {
