@@ -57,37 +57,50 @@ export default function ReciboList() {
     container.style.position = 'absolute'
     container.style.left = '-9999px'
     container.style.top = '0'
-    container.style.width = '210mm' // A4
+    container.style.width = '800px' // Fixar largura em pixels para evitar cortes
+    container.style.background = 'white'
     container.className = 'pdf-render-container'
     container.innerHTML = html
     document.body.appendChild(container)
     
-    // Adicionar estilos básicos inline para garantir que o PDF pareça correto
+    // Adicionar estilos de override para garantir que o PDF pareça correto e não corte
     const style = document.createElement('style')
     style.innerHTML = `
-      .pdf-render-container { font-family: sans-serif; color: #333; line-height: 1.5; padding: 20mm; background: white; }
-      .pdf-render-container table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-      .pdf-render-container th, .pdf-render-container td { border: 1px solid #eee; padding: 8px; text-align: left; }
+      .pdf-render-container .container { 
+        width: 100% !important; 
+        height: auto !important; 
+        padding: 40px !important; 
+        margin: 0 !important;
+        box-shadow: none !important;
+      }
+      .pdf-render-container * {
+        box-sizing: border-box !important;
+      }
     `
     container.appendChild(style)
     
     // Pequena pausa para garantir renderização de fontes e estilos
-    await new Promise(resolve => setTimeout(resolve, 500))
+    await new Promise(resolve => setTimeout(resolve, 800))
     
     const canvas = await html2canvas(container, {
       scale: 2,
       useCORS: true,
       logging: false,
-      backgroundColor: '#ffffff'
+      backgroundColor: '#ffffff',
+      width: 800, // Forçar largura do canvas
     })
     
     const imgData = canvas.toDataURL('image/png')
     const pdf = new jsPDF('p', 'mm', 'a4')
-    const imgProps = pdf.getImageProperties(imgData)
-    const pdfWidth = pdf.internal.pageSize.getWidth()
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
     
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+    const pdfWidth = pdf.internal.pageSize.getWidth()
+    const pdfHeight = pdf.internal.pageSize.getHeight()
+    
+    // Calcular proporção para preencher a largura do A4
+    const imgWidth = pdfWidth
+    const imgHeight = (canvas.height * imgWidth) / canvas.width
+    
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight)
     document.body.removeChild(container)
     
     return {
