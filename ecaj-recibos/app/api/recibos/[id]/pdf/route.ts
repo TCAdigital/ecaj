@@ -114,7 +114,7 @@ export async function GET(
                 Rua Olavo Bilac, 4-26, Vila São João da Boa Vista<br>
                 Bauru/SP - CEP: 17060-454<br>
                 Tel: (14) 3208-3272<br>
-                contato@ecajcontabil.com.br
+                ecaj.escritorio@hotmail.com
               </div>
             </div>
             <div class="info-box">

@@ -66,7 +66,7 @@ export async function GET(
             <div class="receipt-title"><h2>RECIBO</h2><div class="receipt-number">Nº ${recibo.numero.toString().padStart(5, '0')}</div></div>
           </div>
           <div class="info-grid">
-            <div class="info-box"><div class="info-box-title">Emitente</div><div class="info-content"><strong>ECAJ Assessoria Contábil</strong><br>Rua Olavo Bilac, 4-26, Vila São João da Boa Vista<br>Bauru/SP - CEP: 17060-454<br>Tel: (14) 3208-3272</div></div>
+            <div class="info-box"><div class="info-box-title">Emitente</div><div class="info-content"><strong>ECAJ Assessoria Contábil</strong><br>Rua Olavo Bilac, 4-26, Vila São João da Boa Vista<br>Bauru/SP - CEP: 17060-454<br>Tel: (14) 3208-3272<br>ecaj.escritorio@hotmail.com</div></div>
             <div class="info-box"><div class="info-box-title">Faturado Para</div><div class="info-content"><strong>${recibo.clienteRelacao.nome}</strong><br>CPF/CNPJ: ${recibo.clienteRelacao.cpfCnpj || 'Não informado'}</div></div>
             <div class="info-box" style="flex: 0.5; text-align: right;"><div class="info-box-title">Data de Emissão</div><div class="info-content" style="font-size: 14px; font-weight: bold;">${recibo.dataRecebimento ? new Date(recibo.dataRecebimento).toLocaleDateString('pt-BR') : ''}</div></div>
           </div>

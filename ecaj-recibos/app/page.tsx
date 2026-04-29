@@ -78,7 +78,7 @@ export default function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
+                placeholder="ecaj.escritorio@hotmail.com"
                 className="w-full px-4 py-3 border border-secondary-200 rounded-xl bg-white/50 focus:bg-white text-secondary-900 placeholder-secondary-400 outline-none transition-all duration-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
                 required
               />

@@ -34,15 +34,11 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { nome, cpfCnpj, email, telefone, endereco, cidade, estado, cep } = body
 
-    if (!nome || !email) {
-      return NextResponse.json({ error: 'Nome e email são obrigatórios' }, { status: 400 })
-    }
-
     const cliente = await prisma.clientes.create({
       data: {
-        nome,
+        nome: nome || 'Cliente sem nome',
         cpfCnpj,
-        email,
+        email: email || '',
         telefone,
         endereco,
         cidade,

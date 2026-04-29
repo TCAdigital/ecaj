@@ -133,7 +133,6 @@ export default function ClienteForm() {
               value={form.nome}
               onChange={(e) => setForm({ ...form, nome: e.target.value })}
               className="w-full px-4 py-2.5 border border-secondary-200 rounded-xl bg-white/50 focus:bg-white text-secondary-900 outline-none transition-all duration-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-              required
             />
           </div>
 
@@ -156,7 +155,6 @@ export default function ClienteForm() {
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               className="w-full px-4 py-2.5 border border-secondary-200 rounded-xl bg-white/50 focus:bg-white text-secondary-900 outline-none transition-all duration-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-              required
             />
           </div>
 

@@ -35,8 +35,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json()
     const { clienteId, dataRecebimento, servicos, outros, valorTotal, assinatura } = body
 
-    if (!clienteId || !servicos) {
-      return NextResponse.json({ error: 'Dados incompletos' }, { status: 400 })
+    if (!clienteId) {
+      return NextResponse.json({ error: 'É necessário selecionar um cliente (mesmo que com dados incompletos)' }, { status: 400 })
     }
 
     // Buscar cliente para pegar o nome

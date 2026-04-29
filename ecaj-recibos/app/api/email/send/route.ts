@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
               <p style="margin: 0; color: #94a3b8; font-size: 12px;">
                 <strong>ECAJ - Assessoria Fiscal e Contábil</strong><br>
                 Rua Olavo Bilac, 4-26, Vila São João da Boa Vista, Bauru/SP<br>
-                (14) 3208-3272 • contato@ecajcontabil.com.br
+                (14) 3208-3272 • ecaj.escritorio@hotmail.com
               </p>
             </div>
           </div>

@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import SignaturePad from './SignaturePad'
+import html2canvas from 'html2canvas'
+import jsPDF from 'jspdf'
 
 type Cliente = {
   id: string
@@ -77,18 +79,96 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
     return servicosTotal + outrosTotal
   }
 
+  const generatePDFBlob = async (reciboId: string): Promise<{ blob: Blob, numero: number }> => {
+    const res = await fetch(`/api/recibos/${reciboId}/pdf`)
+    if (!res.ok) throw new Error('Erro ao buscar dados do PDF')
+    
+    const { html, numero } = await res.json()
+    
+    // Criar um container invisível para o HTML
+    const container = document.createElement('div')
+    container.style.position = 'absolute'
+    container.style.left = '-9999px'
+    container.style.top = '0'
+    container.style.width = '800px'
+    container.style.background = 'white'
+    container.innerHTML = html
+    document.body.appendChild(container)
+    
+    const style = document.createElement('style')
+    style.innerHTML = `
+      .pdf-render-container .container { 
+        width: 100% !important; 
+        height: auto !important; 
+        padding: 40px !important; 
+        margin: 0 !important;
+        box-shadow: none !important;
+      }
+    `
+    container.appendChild(style)
+    
+    await new Promise(resolve => setTimeout(resolve, 800))
+    
+    const canvas = await html2canvas(container, {
+      scale: 1.0,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+      width: 800,
+    })
+    
+    const imgData = canvas.toDataURL('image/jpeg', 0.7)
+    const pdf = new jsPDF({
+      orientation: 'p',
+      unit: 'mm',
+      format: 'a4',
+      compress: true
+    })
+    
+    const pdfWidth = pdf.internal.pageSize.getWidth()
+    const imgWidth = pdfWidth
+    const imgHeight = (canvas.height * imgWidth) / canvas.width
+    
+    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight)
+    document.body.removeChild(container)
+    
+    return {
+      blob: pdf.output('blob'),
+      numero
+    }
+  }
+
+  const autoSendToOffice = async (reciboId: string, clienteNome: string, valorTotal: number) => {
+    try {
+      // Gera o PDF
+      const { blob, numero } = await generatePDFBlob(reciboId)
+      
+      // Envia via API para o e-mail do escritório
+      const formData = new FormData()
+      formData.append('reciboId', reciboId)
+      formData.append('email', 'ecaj.escritorio@hotmail.com')
+      formData.append('nome', clienteNome)
+      formData.append('numero', numero.toString().padStart(4, '0'))
+      formData.append('valor', valorTotal.toString())
+      formData.append('pdf', blob, `recibo-${numero}.pdf`)
+
+      await fetch('/api/email/send', {
+        method: 'POST',
+        body: formData,
+      })
+    } catch (error) {
+      console.error('Erro no auto-envio para o escritório:', error)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!selectedCliente) {
-      alert('Selecione um cliente')
-      return
-    }
-
-    if (servicos.filter(s => s.descricao).length === 0 && outros.filter(o => o.descricao).length === 0) {
-      alert('Adicione pelo menos um serviço ou outro item')
-      return
-    }
+    // Removendo campos obrigatórios conforme solicitado
+    // if (!selectedCliente) {
+    //   alert('Selecione um cliente')
+    //   return
+    // }
 
     setLoading(true)
 
@@ -99,17 +179,22 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          clienteId: selectedCliente,
+          clienteId: selectedCliente || null,
           dataRecebimento,
-          servicos: servicos.filter(s => s.descricao),
-          outros: outros.filter(o => o.descricao),
+          servicos: servicos.filter(s => s.descricao || s.valor),
+          outros: outros.filter(o => o.descricao || o.valor),
           valorTotal: total,
           assinatura,
         }),
       })
 
       if (res.ok) {
-        alert('Recibo criado com sucesso!')
+        const newRecibo = await res.json()
+        
+        // Auto-envio para o escritório em background
+        autoSendToOffice(newRecibo.id, newRecibo.cliente, total)
+
+        alert('Recibo criado com sucesso! Uma cópia foi enviada para o e-mail do escritório.')
         // Reset form
         setSelectedCliente('')
         setDataRecebimento(new Date().toISOString().split('T')[0])
@@ -118,7 +203,8 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
         setAssinatura(null)
         onSuccess()
       } else {
-        alert('Erro ao criar recibo')
+        const errData = await res.json()
+        alert('Erro ao criar recibo: ' + (errData.error || 'Erro desconhecido'))
       }
     } catch (error) {
       console.error('Erro:', error)
@@ -175,7 +261,6 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
               value={selectedCliente}
               onChange={(e) => setSelectedCliente(e.target.value)}
               className="w-full px-4 py-2.5 border border-secondary-200 rounded-xl bg-white/50 focus:bg-white text-secondary-900 outline-none transition-all duration-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-              required
             >
               <option value="">Selecione um cliente cadastrado</option>
               {clientes.map(cliente => (
@@ -195,7 +280,6 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
               value={dataRecebimento}
               onChange={(e) => setDataRecebimento(e.target.value)}
               className="w-full px-4 py-2.5 border border-secondary-200 rounded-xl bg-white/50 focus:bg-white text-secondary-900 outline-none transition-all duration-200 focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500"
-              required
             />
           </div>
         </div>
