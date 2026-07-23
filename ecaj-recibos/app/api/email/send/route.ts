@@ -54,9 +54,9 @@ export async function POST(req: NextRequest) {
       html: `
         <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8fafc; padding: 40px 20px;">
           <div style="background-color: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-            <div style="background-color: #0f766e; padding: 30px; text-align: center;">
+            <div style="background-color: #1b3661; padding: 30px; text-align: center;">
               <h1 style="color: white; margin: 0; font-size: 24px; letter-spacing: 1px;">ECAJ</h1>
-              <p style="color: #99f6e4; margin: 5px 0 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">Assessoria Contábil</p>
+              <p style="color: #b9c9e0; margin: 5px 0 0 0; font-size: 12px; text-transform: uppercase; letter-spacing: 2px;">Assessoria Contábil</p>
             </div>
             
             <div style="padding: 40px 30px;">

@@ -27,14 +27,14 @@ export async function GET(
           * { margin: 0; padding: 0; box-sizing: border-box; }
           body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #1e293b; background: white; }
           .container { width: 210mm; min-height: 297mm; padding: 40px; position: relative; display: flex; flex-direction: column; }
-          .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #0f766e; padding-bottom: 20px; }
+          .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #1b3661; padding-bottom: 20px; }
           .logo-area { display: flex; align-items: center; gap: 15px; }
           .logo-placeholder { display: none; }
           .logo-img { height: 65px; width: auto; max-width: 250px; object-fit: contain; }
           .company-name { display: none; }
           .company-slogan { display: none; }
           .receipt-title { text-align: right; }
-          .receipt-title h2 { font-size: 28px; color: #0f766e; font-weight: 300; letter-spacing: 2px; line-height: 1; margin-bottom: 8px; }
+          .receipt-title h2 { font-size: 28px; color: #1b3661; font-weight: 300; letter-spacing: 2px; line-height: 1; margin-bottom: 8px; }
           .receipt-number { font-size: 14px; color: #64748b; font-weight: bold; }
           .info-grid { display: flex; justify-content: space-between; margin-bottom: 40px; gap: 30px; }
           .info-box { flex: 1; }
@@ -47,7 +47,7 @@ export async function GET(
           .total-box { float: right; width: 300px; background: #f8fafc; border-radius: 8px; padding: 20px; text-align: right; border: 1px solid #e2e8f0; margin-bottom: 40px; }
           .total-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; color: #64748b; }
           .total-final { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding-top: 15px; border-top: 2px solid #e2e8f0; }
-          .total-final .value { font-size: 24px; font-weight: bold; color: #0f766e; }
+          .total-final .value { font-size: 24px; font-weight: bold; color: #1b3661; }
           .signatures { clear: both; display: flex; justify-content: space-between; margin-top: 80px; padding-top: 40px; }
           .sign-box { flex: 1; text-align: center; padding: 0 40px; }
           .sign-line { border-bottom: 1px solid #94a3b8; margin-bottom: 10px; height: 60px; position: relative; }

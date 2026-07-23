@@ -9,17 +9,17 @@ const config: Config = {
     extend: {
       colors: {
         primary: {
-          50: '#f0fdfa', // Lightest cyan
-          100: '#ccfbf1',
-          200: '#99f6e4',
-          300: '#5eead4',
-          400: '#2dd4bf',
-          500: '#14b8a6', // Main cyan brand color
-          600: '#0d9488',
-          700: '#0f766e',
-          800: '#115e59',
-          900: '#134e4a', // Darker accent
-          950: '#042f2e',
+          50: '#f0f4fa',
+          100: '#dbe3f0',
+          200: '#b9c9e0',
+          300: '#8da6cc',
+          400: '#5b7cb3',
+          500: '#395c96',
+          600: '#284778',
+          700: '#1b3661', // Logo blue
+          800: '#172e52',
+          900: '#152642',
+          950: '#0e182b',
         },
         secondary: {
           50: '#f8fafc',
