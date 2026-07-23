@@ -102,7 +102,7 @@ Acesse: http://localhost:3000
 ## 📱 Uso
 
 ### Primeiro Acesso
-- Email: `ecaj.escritorio@hotmail.com`
+- Email: `nfsecaj.escritorio@hotmail.com`
 - Senha: Definida durante o setup
 
 ### Criar Cliente
@@ -171,5 +171,5 @@ MIT
 ## 👥 Contato
 
 ECAJ - Assessoria Fiscal e Contábil
-- Email: ecaj.escritorio@hotmail.com
-- Telefone: (14) 3208-3272
+- Email: nfsecaj.escritorio@hotmail.com
+- Telefone: (14) 99795-7652

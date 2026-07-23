@@ -146,7 +146,7 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
       // Envia via API para o e-mail do escritório
       const formData = new FormData()
       formData.append('reciboId', reciboId)
-      formData.append('email', 'ecaj.escritorio@hotmail.com')
+      formData.append('email', 'nfsecaj.escritorio@hotmail.com')
       formData.append('nome', clienteNome)
       formData.append('numero', numero.toString().padStart(4, '0'))
       formData.append('valor', valorTotal.toString())

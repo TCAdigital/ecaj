@@ -29,9 +29,10 @@ export async function GET(
           .container { width: 210mm; min-height: 297mm; padding: 40px; position: relative; display: flex; flex-direction: column; }
           .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #0f766e; padding-bottom: 20px; }
           .logo-area { display: flex; align-items: center; gap: 15px; }
-          .logo-placeholder { width: 45px; height: 45px; background: #0f766e; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; border-radius: 8px; font-size: 24px; }
-          .company-name { font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
-          .company-slogan { font-size: 11px; color: #64748b; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 4px; }
+          .logo-placeholder { display: none; }
+          .logo-img { height: 65px; width: auto; max-width: 250px; object-fit: contain; }
+          .company-name { display: none; }
+          .company-slogan { display: none; }
           .receipt-title { text-align: right; }
           .receipt-title h2 { font-size: 28px; color: #0f766e; font-weight: 300; letter-spacing: 2px; line-height: 1; margin-bottom: 8px; }
           .receipt-number { font-size: 14px; color: #64748b; font-weight: bold; }
@@ -60,13 +61,12 @@ export async function GET(
         <div class="container pdf-render-container">
           <div class="header">
             <div class="logo-area">
-              <div class="logo-placeholder">E</div>
-              <div><div class="company-name">ECAJ</div><div class="company-slogan">Assessoria Fiscal e Contábil</div></div>
+              <img src="/logo.jpg" alt="Logo ECAJ" class="logo-img" />
             </div>
             <div class="receipt-title"><h2>RECIBO</h2><div class="receipt-number">Nº ${recibo.numero.toString().padStart(5, '0')}</div></div>
           </div>
           <div class="info-grid">
-            <div class="info-box"><div class="info-box-title">Emitente</div><div class="info-content"><strong>ECAJ Assessoria Contábil</strong><br>Rua Olavo Bilac, 4-26, Vila São João da Boa Vista<br>Bauru/SP - CEP: 17060-454<br>Tel: (14) 3208-3272<br>ecaj.escritorio@hotmail.com</div></div>
+            <div class="info-box"><div class="info-box-title">Emitente</div><div class="info-content"><strong>ECAJ Assessoria Contábil</strong><br>Rua Olavo Bilac, 4-26, Vila São João da Boa Vista<br>Bauru/SP - CEP: 17060-454<br>Tel: (14) 99795-7652<br>nfsecaj.escritorio@hotmail.com</div></div>
             <div class="info-box"><div class="info-box-title">Faturado Para</div><div class="info-content"><strong>${recibo.clienteRelacao.nome}</strong><br>CPF/CNPJ: ${recibo.clienteRelacao.cpfCnpj || 'Não informado'}</div></div>
             <div class="info-box" style="flex: 0.5; text-align: right;"><div class="info-box-title">Data de Emissão</div><div class="info-content" style="font-size: 14px; font-weight: bold;">${recibo.dataRecebimento ? new Date(recibo.dataRecebimento).toLocaleDateString('pt-BR') : ''}</div></div>
           </div>
