@@ -1,6 +1,8 @@
 import { authOptions } from '@/lib/auth'
 import nodemailer from 'nodemailer'
 import prisma from '@/lib/prisma'
+import { EMITENTE } from '@/lib/empresa'
+import { escapeHtml, formatBRL } from '@/lib/format'
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
 
@@ -24,6 +26,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Dados incompletos (e-mail, nome, número ou PDF ausente)' }, { status: 400 })
     }
 
+    const recibo = await prisma.recibos.findUnique({
+      where: { id: reciboId },
+      select: { userId: true },
+    })
+
+    if (!recibo) {
+      return NextResponse.json({ error: 'Recibo não encontrado' }, { status: 404 })
+    }
+
+    if (recibo.userId !== session.user.id) {
+      return NextResponse.json({ error: 'Sem permissão' }, { status: 403 })
+    }
+
     // Converter PDF para buffer
     const pdfBuffer = await pdf.arrayBuffer()
     const buffer = Buffer.from(pdfBuffer)
@@ -41,7 +56,10 @@ export async function POST(req: NextRequest) {
       greetingTimeout: 8000,
       socketTimeout: 8000,
       tls: {
-        rejectUnauthorized: false,
+        // O servidor de e-mail atual usa certificado que não valida na cadeia
+        // padrão. Defina SMTP_TLS_STRICT=true assim que o certificado for
+        // corrigido para voltar a exigir validação.
+        rejectUnauthorized: process.env.SMTP_TLS_STRICT === 'true',
         minVersion: 'TLSv1.2'
       }
     })
@@ -60,7 +78,7 @@ export async function POST(req: NextRequest) {
             </div>
             
             <div style="padding: 40px 30px;">
-              <h2 style="color: #1e293b; margin: 0 0 20px 0; font-size: 20px;">Olá, ${nome}!</h2>
+              <h2 style="color: #1e293b; margin: 0 0 20px 0; font-size: 20px;">Olá, ${escapeHtml(nome)}!</h2>
               <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 30px 0;">
                 Seu recibo foi gerado com sucesso pelo nosso sistema. Abaixo você encontra os detalhes do documento que também segue em anexo como PDF.
               </p>
@@ -69,11 +87,11 @@ export async function POST(req: NextRequest) {
                 <table style="width: 100%; border-collapse: collapse;">
                   <tr>
                     <td style="padding-bottom: 10px; color: #64748b; font-size: 13px; text-transform: uppercase; font-weight: bold;">Número do Recibo</td>
-                    <td style="padding-bottom: 10px; text-align: right; color: #1e293b; font-weight: bold;">#${numero}</td>
+                    <td style="padding-bottom: 10px; text-align: right; color: #1e293b; font-weight: bold;">#${escapeHtml(numero)}</td>
                   </tr>
                   <tr>
                     <td style="padding-top: 10px; border-top: 1px solid #e2e8f0; color: #64748b; font-size: 13px; text-transform: uppercase; font-weight: bold;">Valor Recebido</td>
-                    <td style="padding-top: 10px; border-top: 1px solid #e2e8f0; text-align: right; color: #0176ed; font-size: 18px; font-weight: 800;">R$ ${parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                    <td style="padding-top: 10px; border-top: 1px solid #e2e8f0; text-align: right; color: #0176ed; font-size: 18px; font-weight: 800;">R$ ${formatBRL(valor)}</td>
                   </tr>
                 </table>
               </div>
@@ -86,9 +104,9 @@ export async function POST(req: NextRequest) {
             
             <div style="background-color: #f8fafc; border-top: 1px solid #e2e8f0; padding: 30px; text-align: center;">
               <p style="margin: 0; color: #94a3b8; font-size: 12px;">
-                <strong>ECAJ - Assessoria Fiscal e Contábil</strong><br>
-                Rua Olavo Bilac, 4-26, Vila São João da Boa Vista, Bauru/SP<br>
-                (14) 99795-7652 • nfsecaj.escritorio@hotmail.com
+                <strong>${EMITENTE.nomeCompleto}</strong><br>
+                ${EMITENTE.endereco}, ${EMITENTE.cidadeUf}<br>
+                ${EMITENTE.telefone} • ${EMITENTE.email}
               </p>
             </div>
           </div>

@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 import SignaturePad from './SignaturePad'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
+import { gerarPdfRecibo } from '@/lib/pdf'
+import { EMAIL_ESCRITORIO } from '@/lib/empresa'
 
 type Cliente = {
   id: string
@@ -79,107 +79,54 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
     return servicosTotal + outrosTotal
   }
 
-  const generatePDFBlob = async (reciboId: string): Promise<{ blob: Blob, numero: number }> => {
-    const res = await fetch(`/api/recibos/${reciboId}/pdf`)
-    if (!res.ok) throw new Error('Erro ao buscar dados do PDF')
-    
-    const { html, numero } = await res.json()
-    
-    // Criar um container invisível para o HTML
-    const container = document.createElement('div')
-    container.style.position = 'absolute'
-    container.style.left = '-9999px'
-    container.style.top = '0'
-    container.style.width = '800px'
-    container.style.background = 'white'
-    container.innerHTML = html
-    document.body.appendChild(container)
-    
-    const style = document.createElement('style')
-    style.innerHTML = `
-      .pdf-render-container .container { 
-        width: 100% !important; 
-        height: auto !important; 
-        padding: 40px !important; 
-        margin: 0 !important;
-        box-shadow: none !important;
-      }
-    `
-    container.appendChild(style)
-    
-    await new Promise(resolve => setTimeout(resolve, 800))
-    
-    const canvas = await html2canvas(container, {
-      scale: 1.0,
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#ffffff',
-      width: 800,
-    })
-    
-    const imgData = canvas.toDataURL('image/jpeg', 0.7)
-    const pdf = new jsPDF({
-      orientation: 'p',
-      unit: 'mm',
-      format: 'a4',
-      compress: true
-    })
-    
-    const pdfWidth = pdf.internal.pageSize.getWidth()
-    const imgWidth = pdfWidth
-    const imgHeight = (canvas.height * imgWidth) / canvas.width
-    
-    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight)
-    document.body.removeChild(container)
-    
-    return {
-      blob: pdf.output('blob'),
-      numero
-    }
-  }
-
   const autoSendToOffice = async (reciboId: string, clienteNome: string, valorTotal: number) => {
     try {
       // Gera o PDF
-      const { blob, numero } = await generatePDFBlob(reciboId)
-      
+      const { blob, numero } = await gerarPdfRecibo(`/api/recibos/${reciboId}/pdf`)
+
       // Envia via API para o e-mail do escritório
       const formData = new FormData()
       formData.append('reciboId', reciboId)
-      formData.append('email', 'nfsecaj.escritorio@hotmail.com')
+      formData.append('email', EMAIL_ESCRITORIO)
       formData.append('nome', clienteNome)
       formData.append('numero', numero.toString().padStart(4, '0'))
       formData.append('valor', valorTotal.toString())
       formData.append('pdf', blob, `recibo-${numero}.pdf`)
 
-      await fetch('/api/email/send', {
+      const res = await fetch('/api/email/send', {
         method: 'POST',
         body: formData,
       })
+
+      if (!res.ok) throw new Error(`Servidor respondeu ${res.status}`)
     } catch (error) {
       console.error('Erro no auto-envio para o escritório:', error)
+      alert(
+        `O recibo foi salvo, mas a cópia automática para ${EMAIL_ESCRITORIO} não pôde ser enviada. ` +
+        `Use o botão "E-mail" na lista de recibos para reenviar.`
+      )
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Removendo campos obrigatórios conforme solicitado
-    // if (!selectedCliente) {
-    //   alert('Selecione um cliente')
-    //   return
-    // }
+
+    // Demais campos são opcionais, mas o recibo é sempre vinculado a um cliente.
+    if (!selectedCliente) {
+      alert('Selecione o cliente do recibo.')
+      return
+    }
 
     setLoading(true)
 
     try {
       const total = calcularTotal()
-      
+
       const res = await fetch('/api/recibos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          clienteId: selectedCliente || null,
+          clienteId: selectedCliente,
           dataRecebimento,
           servicos: servicos.filter(s => s.descricao || s.valor),
           outros: outros.filter(o => o.descricao || o.valor),
@@ -190,11 +137,11 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
 
       if (res.ok) {
         const newRecibo = await res.json()
-        
-        // Auto-envio para o escritório em background
+
+        // Auto-envio para o escritório em background (avisa apenas se falhar)
         autoSendToOffice(newRecibo.id, newRecibo.cliente, total)
 
-        alert('Recibo criado com sucesso! Uma cópia foi enviada para o e-mail do escritório.')
+        alert('Recibo criado com sucesso! Uma cópia está sendo enviada para o e-mail do escritório.')
         // Reset form
         setSelectedCliente('')
         setDataRecebimento(new Date().toISOString().split('T')[0])

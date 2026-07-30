@@ -78,9 +78,13 @@ export default function ClienteForm() {
         })
         setEditingId(null)
         await fetchClientes()
+      } else {
+        const data = await res.json().catch(() => ({}))
+        alert(data.error || 'Não foi possível salvar o cliente. Tente novamente.')
       }
     } catch (error) {
       console.error('Erro ao salvar cliente:', error)
+      alert('Falha de comunicação ao salvar o cliente.')
     } finally {
       setSubmitting(false)
     }
@@ -93,9 +97,13 @@ export default function ClienteForm() {
       const res = await fetch(`/api/clientes/${id}`, { method: 'DELETE' })
       if (res.ok) {
         await fetchClientes()
+      } else {
+        const data = await res.json().catch(() => ({}))
+        alert(data.error || 'Não foi possível excluir o cliente.')
       }
     } catch (error) {
       console.error('Erro ao deletar cliente:', error)
+      alert('Falha de comunicação ao excluir o cliente.')
     }
   }
 

@@ -28,7 +28,7 @@ export default async function PublicReciboPage({ params }: { params: { id: strin
         </div>
 
         <div className="p-8 space-y-6">
-          <div className="flex justify-between items-center pb-6 border-bottom border-secondary-100">
+          <div className="flex justify-between items-center pb-6 border-b border-secondary-100">
             <div>
               <p className="text-xs text-secondary-400 uppercase font-bold tracking-wider">Número do Recibo</p>
               <p className="text-lg font-bold text-secondary-900">#{recibo.numero.toString().padStart(4, '0')}</p>

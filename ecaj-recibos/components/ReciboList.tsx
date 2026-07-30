@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useSession } from 'next-auth/react'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
+import { gerarPdfRecibo, baixarBlob } from '@/lib/pdf'
 
 type Recibo = {
   id: string
@@ -46,84 +45,11 @@ export default function ReciboList() {
     }
   }
 
-  const generatePDFBlob = async (reciboId: string): Promise<{ blob: Blob, numero: number }> => {
-    const res = await fetch(`/api/recibos/${reciboId}/pdf`)
-    if (!res.ok) throw new Error('Erro ao buscar dados do PDF')
-    
-    const { html, numero } = await res.json()
-    
-    // Criar um container invisível para o HTML
-    const container = document.createElement('div')
-    container.style.position = 'absolute'
-    container.style.left = '-9999px'
-    container.style.top = '0'
-    container.style.width = '800px' // Fixar largura em pixels para evitar cortes
-    container.style.background = 'white'
-    container.className = 'pdf-render-container'
-    container.innerHTML = html
-    document.body.appendChild(container)
-    
-    // Adicionar estilos de override para garantir que o PDF pareça correto e não corte
-    const style = document.createElement('style')
-    style.innerHTML = `
-      .pdf-render-container .container { 
-        width: 100% !important; 
-        height: auto !important; 
-        padding: 40px !important; 
-        margin: 0 !important;
-        box-shadow: none !important;
-      }
-      .pdf-render-container * {
-        box-sizing: border-box !important;
-      }
-    `
-    container.appendChild(style)
-    
-    // Pequena pausa para garantir renderização de fontes e estilos
-    await new Promise(resolve => setTimeout(resolve, 800))
-    
-    const canvas = await html2canvas(container, {
-      scale: 1.0, // Reduzido ao mínimo (1.0) para garantir que o arquivo fique abaixo de 1MB
-      useCORS: true,
-      logging: false,
-      backgroundColor: '#ffffff',
-      width: 800, // Forçar largura do canvas
-    })
-    
-    const imgData = canvas.toDataURL('image/jpeg', 0.7) // Usar JPEG com 70% de qualidade para reduzir drasticamente o tamanho
-    const pdf = new jsPDF({
-      orientation: 'p',
-      unit: 'mm',
-      format: 'a4',
-      compress: true // Ativar compressão nativa do PDF
-    })
-    
-    const pdfWidth = pdf.internal.pageSize.getWidth()
-    const imgWidth = pdfWidth
-    const imgHeight = (canvas.height * imgWidth) / canvas.width
-    
-    pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight)
-    document.body.removeChild(container)
-    
-    return {
-      blob: pdf.output('blob'),
-      numero
-    }
-  }
-
   const handleDownloadPDF = async (reciboId: string) => {
     try {
       setGeneratingPdf(reciboId)
-      const { blob, numero } = await generatePDFBlob(reciboId)
-      
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `recibo-${numero.toString().padStart(4, '0')}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+      const { blob, numero } = await gerarPdfRecibo(`/api/recibos/${reciboId}/pdf`)
+      baixarBlob(blob, `recibo-${numero.toString().padStart(4, '0')}.pdf`)
     } catch (error) {
       console.error('Erro ao baixar PDF:', error)
       alert('Erro ao gerar PDF. Tente novamente.')
@@ -181,8 +107,8 @@ export default function ReciboList() {
       }
 
       // Gera o PDF real
-      const { blob, numero } = await generatePDFBlob(reciboId)
-      
+      const { blob, numero } = await gerarPdfRecibo(`/api/recibos/${reciboId}/pdf`)
+
       // Envia via API
       const formData = new FormData()
       formData.append('reciboId', reciboId)

@@ -4,6 +4,9 @@ import prisma from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 import { startOfMonth, endOfMonth } from 'date-fns'
 
+// Depende da sessão do usuário: nunca pode ser pré-renderizada estaticamente.
+export const dynamic = 'force-dynamic'
+
 export async function GET(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions) as any

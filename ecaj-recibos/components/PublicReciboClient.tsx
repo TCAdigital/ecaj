@@ -1,11 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import html2canvas from 'html2canvas'
-import jsPDF from 'jspdf'
+import { gerarPdfRecibo, baixarBlob } from '@/lib/pdf'
 
 type Props = {
-  recibo: any
+  recibo: { id: string; numero: number }
 }
 
 export default function PublicReciboClient({ recibo }: Props) {
@@ -14,48 +13,9 @@ export default function PublicReciboClient({ recibo }: Props) {
   const handleDownload = async () => {
     try {
       setGenerating(true)
-      const res = await fetch(`/api/recibos/${recibo.id}/pdf`) // Usando a mesma API interna (mas ela requer login!)
-      // ESPERE: a API de PDF requer login. Preciso de uma API pública ou passar o HTML via props.
-      
-      // Melhor: a página pública já tem acesso ao recibo. 
-      // Mas o HTML complexo está no servidor.
-      
-      // Vamos usar uma abordagem mais simples: a página pública vai buscar o HTML 
-      // de uma nova rota pública.
-      
-      const resHtml = await fetch(`/api/public/recibo/${recibo.id}/pdf-data`)
-      const { html } = await resHtml.json()
-      
-      const container = document.createElement('div')
-      container.style.position = 'absolute'
-      container.style.left = '-9999px'
-      container.style.width = '800px'
-      container.innerHTML = html
-      document.body.appendChild(container)
-      
-      const style = document.createElement('style')
-      style.innerHTML = `
-        .pdf-render-container .container { width: 100% !important; padding: 40px !important; margin: 0 !important; }
-      `
-      container.appendChild(style)
-      
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      const canvas = await html2canvas(container, { scale: 1.5, width: 800 })
-      const imgData = canvas.toDataURL('image/jpeg', 0.7)
-      const pdf = new jsPDF({
-        orientation: 'p',
-        unit: 'mm',
-        format: 'a4',
-        compress: true
-      })
-      const pdfWidth = pdf.internal.pageSize.getWidth()
-      const imgHeight = (canvas.height * pdfWidth) / canvas.width
-      
-      pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight)
-      pdf.save(`recibo-${recibo.numero.toString().padStart(4, '0')}.pdf`)
-      
-      document.body.removeChild(container)
+      // Download local: não passa pelo servidor, então cabe uma escala maior.
+      const { blob } = await gerarPdfRecibo(`/api/public/recibo/${recibo.id}/pdf-data`, { scale: 1.5 })
+      baixarBlob(blob, `recibo-${recibo.numero.toString().padStart(4, '0')}.pdf`)
     } catch (error) {
       console.error('Erro ao gerar PDF:', error)
       alert('Erro ao gerar PDF. Tente novamente.')
@@ -65,7 +25,7 @@ export default function PublicReciboClient({ recibo }: Props) {
   }
 
   return (
-    <button 
+    <button
       onClick={handleDownload}
       disabled={generating}
       className="w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 px-6 rounded-2xl transition-all text-center flex items-center justify-center gap-2 shadow-lg shadow-primary-600/20 disabled:opacity-50"

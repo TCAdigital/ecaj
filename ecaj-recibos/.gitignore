@@ -31,3 +31,6 @@ coverage/
 # Database
 *.db
 *.sqlite
+
+# Build info
+tsconfig.tsbuildinfo
