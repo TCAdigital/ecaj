@@ -62,7 +62,7 @@ export default function DashboardPage() {
             <h1 className="text-xl sm:text-2xl font-bold text-secondary-900">Olá, {session?.user?.name || 'Administrador'}</h1>
             <p className="text-sm sm:text-base text-secondary-500">Gerencie seus clientes e emissões de recibos.</p>
           </div>
-          <div className="grid grid-cols-2 md:flex gap-3">
+          <div className="grid grid-cols-1 xs:grid-cols-2 md:flex gap-3">
             <div className="bg-white px-3 sm:px-4 py-2 rounded-xl border border-secondary-200 shadow-sm flex items-center gap-2 sm:gap-3 min-w-0">
               <div className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-lg bg-primary-50 flex items-center justify-center text-primary-600">
                 <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -70,8 +70,9 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] sm:text-xs text-secondary-500 uppercase font-bold tracking-wider">Total do Mês</p>
-                <p className="text-base sm:text-lg font-bold text-secondary-900 truncate">
+                <p className="text-[10px] sm:text-xs text-secondary-500 uppercase font-bold tracking-wider whitespace-nowrap">Total do Mês</p>
+                {/* Valor em dinheiro nunca é truncado: some informação sem o usuário perceber. */}
+                <p className="text-base sm:text-lg font-bold text-secondary-900 whitespace-nowrap tabular-nums leading-tight">
                   R$ {stats.totalValor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
@@ -83,14 +84,14 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <div className="min-w-0">
-                <p className="text-[10px] sm:text-xs text-secondary-500 uppercase font-bold tracking-wider">Recibos</p>
-                <p className="text-base sm:text-lg font-bold text-secondary-900">{stats.totalQuantidade}</p>
+                <p className="text-[10px] sm:text-xs text-secondary-500 uppercase font-bold tracking-wider whitespace-nowrap">Recibos</p>
+                <p className="text-base sm:text-lg font-bold text-secondary-900 tabular-nums leading-tight">{stats.totalQuantidade}</p>
               </div>
             </div>
           </div>
         </div>
         {/* Tabs / Navegação */}
-        <div className="flex bg-secondary-100 p-1.5 rounded-xl w-full sm:w-fit mb-8 shadow-inner overflow-x-auto">
+        <div className="flex bg-secondary-100 p-1.5 rounded-xl w-full sm:w-fit mb-8 shadow-inner overflow-x-auto no-scrollbar">
           <button
             onClick={() => setActiveTab('recibos')}
             className={`flex-1 sm:flex-none justify-center whitespace-nowrap px-3 sm:px-5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 sm:gap-2 ${

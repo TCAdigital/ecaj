@@ -7,6 +7,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        // Celulares estreitos (Galaxy A/S ~360px) precisam de layout próprio.
+        xs: '400px',
+      },
       colors: {
         primary: {
           50: '#f0f4fa',
