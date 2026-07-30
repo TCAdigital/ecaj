@@ -8,6 +8,10 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'ECAJ - Sistema de Recibos',
   description: 'Sistema de gerenciamento de recibos',
+  icons: {
+    icon: '/logo-ecaj.png',
+    apple: '/logo-ecaj.png',
+  },
 }
 
 export const viewport: Viewport = {

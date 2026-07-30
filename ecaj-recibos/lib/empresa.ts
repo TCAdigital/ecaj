@@ -2,6 +2,8 @@
 export const EMITENTE = {
   nome: 'ECAJ Assessoria Contábil',
   nomeCompleto: 'ECAJ - Assessoria Fiscal e Contábil',
+  marca: 'ECAJ',
+  slogan: 'Assessoria Fiscal e Contábil',
   endereco: 'Rua Olavo Bilac, 4-26, Vila São João da Boa Vista',
   cidadeUf: 'Bauru/SP',
   cep: '17060-454',

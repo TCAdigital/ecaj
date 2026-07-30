@@ -34,3 +34,6 @@ coverage/
 
 # Build info
 tsconfig.tsbuildinfo
+
+# Amostra gerada por scripts/generate-mock-receipt.ts
+recibo-exemplo.html

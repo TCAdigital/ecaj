@@ -251,37 +251,46 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
           
           <div className="space-y-3">
             {servicos.map((servico, index) => (
-              <div key={servico.id} className="flex gap-3 items-center group">
-                <span className="text-secondary-400 font-medium text-sm w-4">{index + 1}.</span>
-                <input
-                  type="text"
-                  placeholder="Descrição do Serviço"
-                  value={servico.descricao}
-                  onChange={(e) => handleUpdateServico(servico.id, 'descricao', e.target.value)}
-                  className="flex-1 px-4 py-2 border border-secondary-200 rounded-lg bg-white/50 focus:bg-white text-secondary-900 outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition"
-                />
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-500 text-sm font-medium">R$</span>
+              <div
+                key={servico.id}
+                className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center group rounded-xl border border-secondary-100 p-3 sm:border-0 sm:p-0"
+              >
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <span className="text-secondary-400 font-medium text-sm w-4 shrink-0">{index + 1}.</span>
                   <input
-                    type="number"
-                    placeholder="0,00"
-                    step="0.01"
-                    min="0"
-                    value={servico.valor}
-                    onChange={(e) => handleUpdateServico(servico.id, 'valor', e.target.value)}
-                    className="w-32 pl-9 pr-4 py-2 border border-secondary-200 rounded-lg bg-white/50 focus:bg-white text-secondary-900 outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition"
+                    type="text"
+                    placeholder="Descrição do Serviço"
+                    value={servico.descricao}
+                    onChange={(e) => handleUpdateServico(servico.id, 'descricao', e.target.value)}
+                    className="flex-1 min-w-0 px-4 py-2 border border-secondary-200 rounded-lg bg-white/50 focus:bg-white text-secondary-900 outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition"
                   />
                 </div>
-                {servicos.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveServico(servico.id)}
-                    className="p-2 text-secondary-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition opacity-0 group-hover:opacity-100"
-                    title="Remover"
-                  >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                  </button>
-                )}
+                <div className="flex items-center gap-2 pl-6 sm:pl-0 shrink-0">
+                  <div className="relative flex-1 sm:flex-none">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-500 text-sm font-medium">R$</span>
+                    <input
+                      type="number"
+                      placeholder="0,00"
+                      step="0.01"
+                      min="0"
+                      inputMode="decimal"
+                      value={servico.valor}
+                      onChange={(e) => handleUpdateServico(servico.id, 'valor', e.target.value)}
+                      className="w-full sm:w-32 pl-9 pr-4 py-2 border border-secondary-200 rounded-lg bg-white/50 focus:bg-white text-secondary-900 outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition"
+                    />
+                  </div>
+                  {servicos.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveServico(servico.id)}
+                      className="p-2 shrink-0 text-secondary-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100"
+                      title="Remover"
+                      aria-label="Remover serviço"
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -306,34 +315,43 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
           {outros.length > 0 ? (
             <div className="space-y-3">
               {outros.map((outro, index) => (
-                <div key={outro.id} className="flex gap-3 items-center group">
-                  <span className="text-secondary-400 font-medium text-sm w-4">{index + 1}.</span>
-                  <input
-                    type="text"
-                    placeholder="Descrição da Taxa"
-                    value={outro.descricao}
-                    onChange={(e) => handleUpdateOutro(outro.id, 'descricao', e.target.value)}
-                    className="flex-1 px-4 py-2 border border-secondary-200 rounded-lg bg-white/50 focus:bg-white text-secondary-900 outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition"
-                  />
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-500 text-sm font-medium">R$</span>
+                <div
+                  key={outro.id}
+                  className="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:items-center group rounded-xl border border-secondary-100 p-3 sm:border-0 sm:p-0"
+                >
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-secondary-400 font-medium text-sm w-4 shrink-0">{index + 1}.</span>
                     <input
-                      type="number"
-                      placeholder="0,00"
-                      step="0.01"
-                      min="0"
-                      value={outro.valor}
-                      onChange={(e) => handleUpdateOutro(outro.id, 'valor', e.target.value)}
-                      className="w-32 pl-9 pr-4 py-2 border border-secondary-200 rounded-lg bg-white/50 focus:bg-white text-secondary-900 outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition"
+                      type="text"
+                      placeholder="Descrição da Taxa"
+                      value={outro.descricao}
+                      onChange={(e) => handleUpdateOutro(outro.id, 'descricao', e.target.value)}
+                      className="flex-1 min-w-0 px-4 py-2 border border-secondary-200 rounded-lg bg-white/50 focus:bg-white text-secondary-900 outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition"
                     />
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveOutro(outro.id)}
-                    className="p-2 text-secondary-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition opacity-0 group-hover:opacity-100"
-                  >
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                  </button>
+                  <div className="flex items-center gap-2 pl-6 sm:pl-0 shrink-0">
+                    <div className="relative flex-1 sm:flex-none">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-secondary-500 text-sm font-medium">R$</span>
+                      <input
+                        type="number"
+                        placeholder="0,00"
+                        step="0.01"
+                        min="0"
+                        inputMode="decimal"
+                        value={outro.valor}
+                        onChange={(e) => handleUpdateOutro(outro.id, 'valor', e.target.value)}
+                        className="w-full sm:w-32 pl-9 pr-4 py-2 border border-secondary-200 rounded-lg bg-white/50 focus:bg-white text-secondary-900 outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 transition"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveOutro(outro.id)}
+                      className="p-2 shrink-0 text-secondary-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus:opacity-100"
+                      aria-label="Remover taxa"
+                    >
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -364,10 +382,10 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
               </button>
             </div>
             
-            <div className="bg-white px-6 py-4 rounded-xl border border-secondary-200 shadow-sm min-w-[250px] text-right">
+            <div className="bg-white px-5 sm:px-6 py-4 rounded-xl border border-secondary-200 shadow-sm w-full md:w-auto md:min-w-[250px] text-left md:text-right">
               <span className="text-secondary-500 font-medium text-sm block mb-1">Valor Total a Receber</span>
-              <span className="text-3xl font-bold tracking-tight text-primary-600">
-                R$ {total.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+              <span className="text-2xl sm:text-3xl font-bold tracking-tight text-primary-600">
+                R$ {total.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </span>
             </div>
           </div>
@@ -386,7 +404,7 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
         </div>
 
         {/* Botões */}
-        <div className="flex justify-end gap-4 border-t border-secondary-200 pt-6">
+        <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 sm:gap-4 border-t border-secondary-200 pt-6">
           <button
             type="button"
             onClick={onSuccess}
@@ -397,7 +415,7 @@ export default function ReciboForm({ onSuccess }: { onSuccess: () => void }) {
           <button
             type="submit"
             disabled={loading}
-            className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-xl transition-all shadow-md shadow-primary-600/20 disabled:opacity-50 flex items-center gap-2"
+            className="bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-8 rounded-xl transition-all shadow-md shadow-primary-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {loading ? (
               <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div> Processando...</>

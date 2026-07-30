@@ -61,8 +61,10 @@ export function buildReciboHtml(recibo: ReciboParaTemplate): string {
 
         /* Cabeçalho */
         .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 40px; border-bottom: 2px solid #1b3661; padding-bottom: 20px; }
-        .logo-area { display: flex; align-items: center; gap: 15px; }
-        .logo-img { height: 65px; width: auto; max-width: 250px; object-fit: contain; }
+        .logo-area { display: flex; align-items: center; gap: 14px; }
+        .logo-img { height: 54px; width: auto; max-width: 160px; object-fit: contain; }
+        .logo-marca { font-size: 26px; font-weight: bold; color: #1b3661; letter-spacing: -0.5px; line-height: 1; }
+        .logo-slogan { font-size: 8.5px; font-weight: bold; color: #64748b; text-transform: uppercase; letter-spacing: 1.6px; margin-top: 5px; }
 
         .receipt-title { text-align: right; }
         .receipt-title h2 { font-size: 28px; color: #1b3661; font-weight: 300; letter-spacing: 2px; line-height: 1; margin-bottom: 8px; }
@@ -111,7 +113,11 @@ export function buildReciboHtml(recibo: ReciboParaTemplate): string {
       <div class="container pdf-render-container">
         <div class="header">
           <div class="logo-area">
-            <img src="/logo.jpg" alt="Logo ECAJ" class="logo-img" />
+            <img src="/logo-ecaj.png" alt="Logo ${escapeHtml(EMITENTE.marca)}" class="logo-img" />
+            <div class="logo-text">
+              <div class="logo-marca">${escapeHtml(EMITENTE.marca)}</div>
+              <div class="logo-slogan">${escapeHtml(EMITENTE.slogan)}</div>
+            </div>
           </div>
           <div class="receipt-title">
             <h2>RECIBO</h2>

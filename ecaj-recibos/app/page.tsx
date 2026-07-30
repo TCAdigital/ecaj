@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import Logo from '@/components/Logo'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -42,18 +43,9 @@ export default function LoginPage() {
       <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-primary-500 opacity-10 blur-[120px] pointer-events-none"></div>
 
       <div className="w-full max-w-md relative z-10">
-        {/* Logo Otimizado */}
-        <div className="text-center mb-10 flex flex-col items-center">
-          <div className="w-20 h-20 bg-primary-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary-600/30">
-            {/* SVG Logo Placeholder ECAJ */}
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
-              <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <h1 className="text-3xl font-bold text-secondary-900 tracking-tight">ECAJ</h1>
-          <p className="text-secondary-500 font-medium tracking-wide text-sm mt-1 uppercase">Assessoria Contábil</p>
+        {/* Marca */}
+        <div className="mb-10 flex justify-center">
+          <Logo tamanho="lg" />
         </div>
 
         {/* Card de Login Premium */}
@@ -116,7 +108,16 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="text-center text-secondary-400 text-xs mt-8 font-medium">
-          © {new Date().getFullYear()} ECAJ. Desenvolvido com Antigravity.
+          © {new Date().getFullYear()} ECAJ. Desenvolvido por{' '}
+          <a
+            href="https://tcadigital.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary-600 hover:text-primary-700 hover:underline font-semibold transition-colors"
+          >
+            TCA Digital
+          </a>
+          .
         </p>
       </div>
     </div>

@@ -231,26 +231,30 @@ export default function ReciboList() {
               <div className="flex items-stretch">
                 <button
                   onClick={() => setExpandedId(expandedId === recibo.id ? null : recibo.id)}
-                  className="flex-1 p-5 hover:bg-primary-50/50 transition-colors text-left flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-r border-secondary-100"
+                  className="flex-1 min-w-0 p-4 sm:p-5 hover:bg-primary-50/50 transition-colors text-left flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-r border-secondary-100"
                 >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-1">
-                      <span className="text-sm font-bold px-2.5 py-1 bg-primary-100 text-primary-700 rounded-md">
+                  <div className="flex-1 min-w-0 w-full">
+                    <div className="flex items-center gap-2 sm:gap-3 mb-1 min-w-0">
+                      <span className="shrink-0 text-xs sm:text-sm font-bold px-2 py-0.5 sm:px-2.5 sm:py-1 bg-primary-100 text-primary-700 rounded-md">
                         #{recibo.numero.toString().padStart(4, '0')}
                       </span>
-                      <span className="font-semibold text-secondary-900 truncate">{recibo.cliente}</span>
+                      <span className="min-w-0 flex-1 font-semibold text-secondary-900 truncate" title={recibo.cliente}>
+                        {recibo.cliente}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-secondary-500">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                      </svg>
-                      {new Date(recibo.criadoEm).toLocaleDateString('pt-BR')}
-                      
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm text-secondary-500">
+                      <span className="flex items-center gap-1.5">
+                        <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {new Date(recibo.criadoEm).toLocaleDateString('pt-BR')}
+                      </span>
+
                       {recibo.historico.length > 1 && (
                         <>
                           <span className="w-1 h-1 bg-secondary-300 rounded-full"></span>
                           <span className="text-green-600 flex items-center gap-1">
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg className="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                             </svg>
                             Enviado
@@ -259,15 +263,15 @@ export default function ReciboList() {
                       )}
                     </div>
                   </div>
-                  
-                  <div className="flex items-center sm:text-right gap-4">
-                    <div>
-                      <p className="text-xs text-secondary-500 uppercase font-semibold mb-0.5">Total</p>
-                      <p className="text-lg font-bold text-primary-600">
-                        R$ {recibo.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+
+                  <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-4 w-full sm:w-auto shrink-0">
+                    <div className="sm:text-right">
+                      <p className="text-[10px] sm:text-xs text-secondary-500 uppercase font-semibold mb-0.5 tracking-wider">Total</p>
+                      <p className="text-base sm:text-lg font-bold text-primary-600 whitespace-nowrap">
+                        R$ {recibo.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </p>
                     </div>
-                    <div className={`w-8 h-8 rounded-full bg-secondary-100 flex items-center justify-center text-secondary-500 transition-transform duration-300 ${expandedId === recibo.id ? 'rotate-180 bg-primary-100 text-primary-600' : ''}`}>
+                    <div className={`w-8 h-8 shrink-0 rounded-full bg-secondary-100 flex items-center justify-center text-secondary-500 transition-transform duration-300 ${expandedId === recibo.id ? 'rotate-180 bg-primary-100 text-primary-600' : ''}`}>
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                       </svg>
@@ -276,8 +280,9 @@ export default function ReciboList() {
                 </button>
                 <button
                   onClick={() => handleDelete(recibo.id)}
-                  className="px-4 flex items-center justify-center text-secondary-400 hover:text-red-500 hover:bg-red-50 transition-all"
+                  className="px-3 sm:px-4 shrink-0 flex items-center justify-center text-secondary-400 hover:text-red-500 hover:bg-red-50 transition-all"
                   title="Excluir recibo"
+                  aria-label="Excluir recibo"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -286,11 +291,11 @@ export default function ReciboList() {
               </div>
 
               {/* Conteúdo Expandido */}
-              <div className={`transition-all duration-300 ease-in-out origin-top ${expandedId === recibo.id ? 'scale-y-100 opacity-100 max-h-[500px]' : 'scale-y-0 opacity-0 max-h-0'}`}>
-                <div className="border-t border-secondary-100 bg-secondary-50/50 p-5 space-y-5">
-                  
+              <div className={`transition-all duration-300 ease-in-out origin-top ${expandedId === recibo.id ? 'scale-y-100 opacity-100 max-h-[900px]' : 'scale-y-0 opacity-0 max-h-0'}`}>
+                <div className="border-t border-secondary-100 bg-secondary-50/50 p-4 sm:p-5 space-y-5">
+
                   {/* Ações */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                     <button
                       onClick={() => handleDownloadPDF(recibo.id)}
                       disabled={!!generatingPdf}

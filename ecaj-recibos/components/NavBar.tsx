@@ -1,6 +1,7 @@
 'use client'
 
 import { useSession, signOut } from 'next-auth/react'
+import Logo from './Logo'
 
 export default function NavBar() {
   const { data: session } = useSession()
@@ -8,19 +9,7 @@ export default function NavBar() {
   return (
     <nav className="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-secondary-200 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center shadow-md shadow-primary-600/20">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
-              <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <div>
-            <h1 className="text-xl font-bold text-secondary-900 tracking-tight leading-none">ECAJ</h1>
-            <p className="text-xs text-secondary-500 font-medium hidden md:block mt-0.5">Gestão de Recibos</p>
-          </div>
-        </div>
+        <Logo tamanho="sm" />
 
         <div className="flex items-center gap-5">
           <div className="flex items-center gap-3 pr-4 border-r border-secondary-200">

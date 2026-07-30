@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSession } from 'next-auth/react'
 
 type Cliente = {
@@ -32,6 +32,8 @@ export default function ClienteForm() {
   const [editingId, setEditingId] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const formRef = useRef<HTMLDivElement>(null)
+  const nomeInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     fetchClientes()
@@ -119,23 +121,45 @@ export default function ClienteForm() {
       cep: cliente.cep || '',
     })
     setEditingId(cliente.id)
+
+    // O formulário fica acima da lista: leva o usuário até ele em vez de
+    // exigir que role a página manualmente depois de clicar em "Editar".
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    nomeInputRef.current?.focus({ preventScroll: true })
+  }
+
+  const cancelarEdicao = () => {
+    setEditingId(null)
+    setForm({ nome: '', cpfCnpj: '', email: '', telefone: '', endereco: '', cidade: '', estado: '', cep: '' })
   }
 
   return (
     <div className="space-y-8">
       {/* Formulário */}
-      <div className="glass-card rounded-2xl p-6 sm:p-8">
-        <h2 className="text-xl font-bold text-secondary-900 mb-6 flex items-center gap-2">
-          <svg className="w-6 h-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div
+        ref={formRef}
+        className={`glass-card rounded-2xl p-5 sm:p-8 scroll-mt-24 transition-all ${
+          editingId ? 'ring-2 ring-primary-500/40 border-primary-200' : ''
+        }`}
+      >
+        <h2 className="text-lg sm:text-xl font-bold text-secondary-900 mb-6 flex items-center gap-2">
+          <svg className="w-6 h-6 shrink-0 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
           </svg>
-          {editingId ? 'Editar Cliente' : 'Novo Cliente'}
+          {editingId ? (
+            <span className="min-w-0 truncate">
+              Editando: <span className="text-primary-700">{form.nome || 'cliente'}</span>
+            </span>
+          ) : (
+            'Novo Cliente'
+          )}
         </h2>
 
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="col-span-1 md:col-span-2">
             <label className="block text-sm font-medium text-secondary-700 mb-1.5 ml-1">Nome Completo</label>
             <input
+              ref={nomeInputRef}
               type="text"
               placeholder="Digite o nome do cliente"
               value={form.nome}
@@ -234,10 +258,7 @@ export default function ClienteForm() {
             {editingId && (
               <button
                 type="button"
-                onClick={() => {
-                  setEditingId(null)
-                  setForm({ nome: '', cpfCnpj: '', email: '', telefone: '', endereco: '', cidade: '', estado: '', cep: '' })
-                }}
+                onClick={cancelarEdicao}
                 className="px-6 py-3 border border-secondary-300 text-secondary-700 rounded-xl hover:bg-secondary-50 font-medium transition"
               >
                 Cancelar
@@ -288,7 +309,11 @@ export default function ClienteForm() {
               .map((cliente) => (
                 <div
                   key={cliente.id}
-                  className="bg-white p-5 border border-secondary-200 rounded-xl hover:border-primary-300 hover:shadow-md transition-all group animate-slide-up"
+                  className={`bg-white p-4 sm:p-5 border rounded-xl hover:shadow-md transition-all group animate-slide-up ${
+                    editingId === cliente.id
+                      ? 'border-primary-400 ring-2 ring-primary-500/20'
+                      : 'border-secondary-200 hover:border-primary-300'
+                  }`}
                 >
                 <div className="flex items-start justify-between">
                   <div className="min-w-0 flex-1">
@@ -307,10 +332,11 @@ export default function ClienteForm() {
                     </div>
                   </div>
                 </div>
-                <div className="flex gap-2 mt-4 pt-4 border-t border-secondary-100 opacity-0 group-hover:opacity-100 transition-opacity">
+                {/* Sempre visível no toque; no desktop aparece ao passar o mouse. */}
+                <div className="flex gap-2 mt-4 pt-4 border-t border-secondary-100 opacity-100 md:opacity-0 md:group-hover:opacity-100 md:focus-within:opacity-100 transition-opacity">
                   <button
                     onClick={() => handleEdit(cliente)}
-                    className="flex-1 py-2 bg-secondary-50 text-secondary-700 hover:bg-secondary-100 rounded-lg text-sm font-semibold transition"
+                    className="flex-1 py-2 bg-primary-50 text-primary-700 hover:bg-primary-100 rounded-lg text-sm font-semibold transition"
                   >
                     Editar
                   </button>

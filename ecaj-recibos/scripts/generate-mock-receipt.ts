@@ -28,15 +28,18 @@ async function main() {
     },
   })
 
-  // O template referencia /logo.jpg (servido pelo Next). Fora do app, embute a
-  // imagem para o arquivo abrir corretamente no browser.
-  const logoPath = path.join(process.cwd(), 'public', 'logo.jpg')
-  const htmlComLogo = fs.existsSync(logoPath)
-    ? html.replace(
-        'src="/logo.jpg"',
-        `src="data:image/jpeg;base64,${fs.readFileSync(logoPath).toString('base64')}"`
-      )
-    : html
+  // O template referencia /logo-ecaj.png (servido pelo Next). Fora do app,
+  // embute a imagem para o arquivo abrir corretamente no browser.
+  const logoRelativo = '/logo-ecaj.png'
+  const logoPath = path.join(process.cwd(), 'public', path.basename(logoRelativo))
+  if (!fs.existsSync(logoPath)) {
+    throw new Error(`Logo não encontrada em ${logoPath}`)
+  }
+
+  const htmlComLogo = html.replace(
+    `src="${logoRelativo}"`,
+    `src="data:image/png;base64,${fs.readFileSync(logoPath).toString('base64')}"`
+  )
 
   const outputPath = path.join(process.cwd(), 'recibo-exemplo.html')
   fs.writeFileSync(outputPath, htmlComLogo)

@@ -1,6 +1,8 @@
 import prisma from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import PublicReciboClient from '@/components/PublicReciboClient'
+import Logo from '@/components/Logo'
+import { EMITENTE } from '@/lib/empresa'
 
 export default async function PublicReciboPage({ params }: { params: { id: string } }) {
   const recibo = await prisma.recibos.findUnique({
@@ -16,15 +18,11 @@ export default async function PublicReciboPage({ params }: { params: { id: strin
     <div className="min-h-screen bg-secondary-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl shadow-secondary-200/50 overflow-hidden border border-secondary-100">
         <div className="bg-primary-600 p-8 text-white text-center">
-          <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="white"/>
-              <path d="M2 17L12 22L22 17" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M2 12L12 17L22 12" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+          <div className="flex justify-center mb-6">
+            <Logo variante="branco" tamanho="md" />
           </div>
           <h1 className="text-2xl font-bold">Seu Recibo está Pronto!</h1>
-          <p className="text-primary-100 mt-2">Emitido por ECAJ Assessoria Contábil</p>
+          <p className="text-primary-100 mt-2">Emitido por {EMITENTE.nomeCompleto}</p>
         </div>
 
         <div className="p-8 space-y-6">
@@ -54,7 +52,7 @@ export default async function PublicReciboPage({ params }: { params: { id: strin
         </div>
 
         <div className="bg-secondary-50 p-6 text-center border-t border-secondary-100">
-          <p className="text-xs text-secondary-400 font-medium uppercase tracking-widest">ECAJ Assessoria Contábil</p>
+          <p className="text-xs text-secondary-400 font-medium uppercase tracking-widest">{EMITENTE.nomeCompleto}</p>
         </div>
       </div>
       
